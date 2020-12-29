@@ -1,10 +1,14 @@
 import {all, fork, put, takeLatest} from 'redux-saga/effects'
 import {delay} from "q";
-import {ADD_REMINDER, addReminderSuccess} from "./actions";
+import {ADD_REMINDER, addReminderFailure, addReminderSuccess} from "./actions";
 
 export function* addReminder(action: any) {
-    yield delay(500)
-    yield put(addReminderSuccess(action.payload))
+    try {
+        yield delay(500)
+        yield put(addReminderSuccess(action.payload))
+    } catch (e) {
+        yield put(addReminderFailure(e))
+    }
 }
 
 export function* watchAddReminder() {
