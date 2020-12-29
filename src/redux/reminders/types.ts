@@ -1,4 +1,4 @@
-export interface Reminder {
+export interface ReminderModel {
     day: number
     month: number
     year: number

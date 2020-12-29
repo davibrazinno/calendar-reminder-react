@@ -3,7 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import { createInjectorsEnhancer } from 'redux-injectors';
 
 import createReducer from './rootReducer'
-import rootSaga from '../redux/sagas'
+import rootSaga from './rootSaga'
 
 export default function configureAppStore(initialState = {}) {
   const reduxSagaMonitorOptions = {};

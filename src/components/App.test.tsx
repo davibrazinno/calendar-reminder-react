@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 import App from './App';
 import {Provider} from "react-redux";
 import configureStore, {MockStore} from 'redux-mock-store'
+import {DateTime} from "luxon";
 
 const mockStore = configureStore([]);
 
@@ -11,13 +12,14 @@ describe('renders learn react link', () => {
 
   beforeEach(() => {
     store = mockStore({
-      count: 1,
+      reminders: {}
     });
   });
 
-  it('testing react redux-saga', () => {
+  it('initial basic test', () => {
     const { getByText } = render(<Provider store={store}><App /></Provider>);
-    const linkElement = getByText(/save to reload\./i);
+    const currentDate = DateTime.local()
+    const linkElement = getByText(new RegExp(`${currentDate.monthLong}[\\s+]${currentDate.year}`));
     expect(linkElement).toBeInTheDocument();
   })
 

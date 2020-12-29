@@ -1,35 +1,41 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './Calendar.scss';
-import {FcPrevious, FcNext} from 'react-icons/fc';
-import {CALENDAR_VIEW, MonthView} from "../../redux/calendar/calendar.types";
-import {Reminder} from "../../redux/reminders/reminders.types";
-import {RemindersState} from "../../redux/reminders";
+import {FcNext, FcPrevious} from 'react-icons/fc';
+import {MonthView} from "./calendar.types";
+import {ReminderModel} from "../../redux/reminders/types";
+import {createMonthView} from "./calendar.utils";
+import {DateTime} from "luxon";
+import {RemindersState} from "../../redux/reminders/reducer";
+import Reminder from "../Reminder/Reminder";
 
 interface ICalendarProps {
-    view: CALENDAR_VIEW;
-    dates?: MonthView;
     reminders?: RemindersState;
-    onPreviousMonth?: any;
-    onNextMonth?: any;
     onAddReminder?: any;
 }
 
-const Calendar: React.FC<ICalendarProps> = (
-    {
-        dates,
-        reminders,
-        onNextMonth,
-        onPreviousMonth,
-        onAddReminder
-    }): JSX.Element => {
+const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
+    const {onAddReminder, reminders} = props
+
+    const [dates, setDates] = useState<MonthView>(createMonthView(DateTime.local()))
+
+    const [currentDate, setCurrentDate] = useState<number>(DateTime.local().toMillis())
+
+    useEffect(() => {
+        setDates(createMonthView(DateTime.fromMillis(currentDate)))
+    }, [currentDate])
+
+    const previousMonth = () => setCurrentDate(DateTime.fromMillis(currentDate).minus({months: 1}).toMillis())
+
+    const nextMonth = () => setCurrentDate(DateTime.fromMillis(currentDate).plus({months: 1}).toMillis())
+
     return (
-        <main id="calendar">
+        <main id="calendar" data-testid="Calendar">
             <section className="month-header">
-                <button onClick={() => onPreviousMonth()} className='previous-month'>
+                <button onClick={() => previousMonth()} className='previous-month'>
                     <FcPrevious/>
                 </button>
                 <h1>{dates?.month} {dates?.year}</h1>
-                <button onClick={() => onNextMonth()} className='next-month'>
+                <button onClick={() => nextMonth()} className='next-month'>
                     <FcNext/>
                 </button>
             </section>
@@ -52,8 +58,8 @@ const Calendar: React.FC<ICalendarProps> = (
                              onKeyPress={() => {}} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
                              role='button'
                              tabIndex={0}>
-                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.map((reminder: Reminder, index) =>
-                                <span key={index}>{reminder.description}</span>
+                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.map((reminder: ReminderModel, index) =>
+                                <Reminder data={reminder} />
                             )}
                         </div>
                     )}

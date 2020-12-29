@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import './index.css';
-import configureStore from './redux/store'
-import App from './views/App';
+import configureStore from './redux/rootStore'
+import App from './components/App';
 import * as serviceWorker from './serviceWorker';
 
 const initialState = {};

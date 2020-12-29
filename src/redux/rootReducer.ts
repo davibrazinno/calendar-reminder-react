@@ -1,11 +1,9 @@
 
 import { combineReducers } from '@reduxjs/toolkit'
 
-import calendarReducer from '../redux/calendar'
-import reminderReducer from '../redux/reminders'
+import reminderReducer from '../redux/reminders/reducer'
 
 const reducers = {
-  calendar: calendarReducer,
   reminders: reminderReducer
 }
 
