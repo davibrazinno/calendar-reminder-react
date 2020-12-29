@@ -59,7 +59,7 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                              role='button'
                              tabIndex={0}>
                             {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.map((reminder: ReminderModel, index) =>
-                                <Reminder data={reminder} />
+                                <Reminder data={reminder} key={index}/>
                             )}
                         </div>
                     )}
