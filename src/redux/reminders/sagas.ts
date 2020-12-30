@@ -6,7 +6,7 @@ import {
     getLocationWeatherHistory,
     HistoricWeatherData
 } from "../../api/open-weather-map";
-import {Coordinates, getCoordinates} from "../../api/google-geocoder";
+import {Coordinates, getCoordinatesByPlaceId} from "../../api/google-geocoder";
 import {ReminderModel} from "./types";
 import {DateTime} from "luxon";
 
@@ -18,8 +18,8 @@ export function* addReminder(action: any) {
         const reminderDate = DateTime.fromMillis(reminder.dateTime).set({hour: 0, minute: 0, second: 0, millisecond: 0})
         const daysDiff = reminderDate.diff(today, 'days').toObject().days as number
 
-        if (daysDiff >= -5 && daysDiff <= 7) {
-            const coordinates: Coordinates = yield call(getCoordinates, reminder.city)
+        if (reminder.city?.placeId && daysDiff >= -5 && daysDiff <= 7) {
+            const coordinates: Coordinates = yield call(getCoordinatesByPlaceId, reminder.city.placeId)
             if (daysDiff < 0) {
                 // get weather history
                 const ts = Math.round(reminder.dateTime / 1000)

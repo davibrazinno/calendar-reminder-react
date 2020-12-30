@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './Calendar.scss';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import {MonthView} from "./calendar.types";
+import {MonthView, MonthViewDay} from "./calendar.types";
 import {ReminderModel} from "../../redux/reminders/types";
 import {createMonthView} from "./calendar.utils";
 import {DateTime} from "luxon";
@@ -30,9 +30,36 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
 
     const nextMonth = () => setCurrentDate(DateTime.fromMillis(currentDate).plus({months: 1}).toMillis())
 
+    const [reminder, setReminder] = useState<ReminderModel>({description: '', dateTime: new Date().getTime()} as ReminderModel)
+
+    const updateReminder = (reminderUpdated: ReminderModel) => {
+        setOpenReminder(false)
+        setReminder({} as ReminderModel)
+        onAddReminder(reminderUpdated)
+    }
+
+    const cancelReminder = () => {
+        setReminder({} as ReminderModel)
+        setOpenReminder(false)
+    }
+
+    // TODO refactor models
+    const [openReminder, setOpenReminder] = useState(false)
+    const openReminderDialog = (newReminder: MonthViewDay) => {
+        setReminder({
+            dateTime: DateTime.local().set({day: newReminder.day, month: newReminder.month, year: newReminder.year}).toMillis(),
+        } as ReminderModel)
+        setOpenReminder(true)
+    }
+
     return (
         <main id="calendar" data-testid="Calendar">
-            <ReminderForm onSave={(reminder: ReminderModel) => console.log(reminder)}/>
+            <ReminderForm
+                onSave={updateReminder}
+                onCancel={cancelReminder}
+                data={reminder}
+                openReminder={openReminder}
+            />
             <section className="month-header">
                 <button onClick={() => previousMonth()} className='previous-month'>
                     <NavigateBeforeIcon/>
@@ -55,7 +82,7 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                 <div className="week" key={index}>
                     {week.map((weekDay) =>
                         <div key={`${weekDay.month}${weekDay.day}`}
-                             onClick={(e) => weekDay.isCurrentMonth ? onAddReminder(weekDay) : e.preventDefault()}
+                             onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay) : e.preventDefault()}
                              data-date={weekDay.day}
                              className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
                              onKeyPress={() => {

@@ -10,21 +10,19 @@ interface IReminderProps {
 
 const Reminder: React.FC<IReminderProps> = (props: IReminderProps) => {
     const {data} = props
-    let weatherData
-    if (data.weather) {
-        weatherData = <span>
+    const city = !data.city ? <span></span> : <span>{data.city.name}</span>
+    const weatherData = !data.weather ? <span></span> :
+        <span>
             <img style={{width: '25px', height: 'auto', verticalAlign: "middle"}} alt='Weather'
                  src={`http://openweathermap.org/img/w/${data.weather.icon}.png`}/>
             {data.weather.main}
         </span>
-
-    }
     return (
-        <div data-testid="Reminder">
+        <div data-testid="Reminder" style={{border: 0}}>
             <Card style={{backgroundColor: data.color, borderRadius: '10px'}}>
                 <Box style={{paddingTop: '5px', paddingLeft: '5px'}}>
                     <Typography noWrap>{data.description}</Typography>
-                    <Typography noWrap>{data.city}{weatherData}</Typography>
+                    <Typography noWrap>{city}{weatherData}</Typography>
                 </Box>
             </Card>
         </div>
