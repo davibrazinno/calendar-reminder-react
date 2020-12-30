@@ -5,6 +5,8 @@ import {RootState} from "../redux/rootReducer";
 import Calendar from "./Calendar/Calendar";
 import {MonthViewDay} from "./Calendar/calendar.types";
 import {addReminderRequest} from "../redux/reminders/actions";
+import {ReminderColor} from "../redux/reminders/types";
+import {DateTime} from "luxon";
 
 
 const App: React.FC = (): JSX.Element => {
@@ -16,7 +18,9 @@ const App: React.FC = (): JSX.Element => {
         month: reminder.month,
         year: reminder.year,
         description: 'Hello Reminder!',
-        dateTime: new Date().getTime()
+        dateTime: DateTime.local().set({year: reminder.year, month: reminder.month, day: reminder.day}).toMillis(),
+        color: ReminderColor.RED,
+        city: 'Florianópolis'
     }))
 
     return (

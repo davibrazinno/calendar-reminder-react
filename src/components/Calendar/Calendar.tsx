@@ -54,7 +54,7 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                         <div key={`${weekDay.month}${weekDay.day}`}
                              onClick={(e) => weekDay.isCurrentMonth ? onAddReminder(weekDay) : e.preventDefault()}
                              data-date={weekDay.day}
-                             className={`${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
+                             className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
                              onKeyPress={() => {}} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
                              role='button'
                              tabIndex={0}>

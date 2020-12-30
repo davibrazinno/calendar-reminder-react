@@ -39,6 +39,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    min-width: 42px;
   }
 }
 
@@ -48,10 +49,10 @@
 
   div {
     border: 1px solid #cecece;
-    padding: 20px 2px 2px;
     min-height: 50px;
     position: relative; /* allow ::after pseudo element absolute positioning */
     width: 100%;
+    min-width: 50px;
 
     &::after {
       content: attr(data-date);
@@ -63,6 +64,10 @@
       color: #000;
     }
   }
+}
+
+.day-block {
+  padding: 20px 5px 5px 5px;
 }
 
 .no-working-day {
