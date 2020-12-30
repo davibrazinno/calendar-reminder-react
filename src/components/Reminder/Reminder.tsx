@@ -20,12 +20,14 @@ const Reminder: React.FC<IReminderProps> = (props: IReminderProps) => {
 
     }
     return (
-        <Card style={{backgroundColor: data.color, borderRadius: '10px'}}>
-            <Box style={{paddingTop: '5px', paddingLeft: '5px'}}>
-                <Typography noWrap>{data.description}</Typography>
-                <Typography noWrap>{data.city}{weatherData}</Typography>
-            </Box>
-        </Card>
+        <div data-testid="Reminder">
+            <Card style={{backgroundColor: data.color, borderRadius: '10px'}}>
+                <Box style={{paddingTop: '5px', paddingLeft: '5px'}}>
+                    <Typography noWrap>{data.description}</Typography>
+                    <Typography noWrap>{data.city}{weatherData}</Typography>
+                </Box>
+            </Card>
+        </div>
     );
 }
 

@@ -24,7 +24,7 @@ const App: React.FC = (): JSX.Element => {
     }))
 
     return (
-        <div className="App">
+        <div className="App" data-testid="App">
             <Calendar
                 reminders={reminders}
                 onAddReminder={(data: MonthViewDay) => addReminder(data)}

@@ -2,7 +2,7 @@ import { all, fork } from 'redux-saga/effects';
 
 import { rootSaga as reminders } from './reminders/sagas';
 
-export function createSagaAction(type) {
+export function createSagaAction(type: string) {
   return {
     REQUEST: `${type}.REQUEST`,
     SUCCESS: `${type}.SUCCESS`,

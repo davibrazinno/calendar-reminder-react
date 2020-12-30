@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import './Calendar.scss';
-import {FcNext, FcPrevious} from 'react-icons/fc';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import {MonthView} from "./calendar.types";
 import {ReminderModel} from "../../redux/reminders/types";
 import {createMonthView} from "./calendar.utils";
 import {DateTime} from "luxon";
 import {RemindersState} from "../../redux/reminders/reducer";
 import Reminder from "../Reminder/Reminder";
+import ReminderForm from "../ReminderForm/ReminderForm";
 
 interface ICalendarProps {
     reminders?: RemindersState;
@@ -30,13 +32,14 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
 
     return (
         <main id="calendar" data-testid="Calendar">
+            <ReminderForm onSave={(reminder: ReminderModel) => console.log(reminder)}/>
             <section className="month-header">
                 <button onClick={() => previousMonth()} className='previous-month'>
-                    <FcPrevious/>
+                    <NavigateBeforeIcon/>
                 </button>
                 <h1>{dates?.month} {dates?.year}</h1>
                 <button onClick={() => nextMonth()} className='next-month'>
-                    <FcNext/>
+                    <NavigateNextIcon/>
                 </button>
             </section>
             <section className="week-headers">
@@ -55,7 +58,8 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                              onClick={(e) => weekDay.isCurrentMonth ? onAddReminder(weekDay) : e.preventDefault()}
                              data-date={weekDay.day}
                              className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
-                             onKeyPress={() => {}} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
+                             onKeyPress={() => {
+                             }} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
                              role='button'
                              tabIndex={0}>
                             {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.map((reminder: ReminderModel, index) =>
