@@ -9,7 +9,19 @@ The App component uses the Calendar component and stores the reminders in the Se
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and upgraded to include Luxon, Sass, Redux Saga, Material UI, React Icons, and Cypress for E2E testing.
 
-
+### Project directory layout
+    .
+    ├── cypress                 # Cypress (E2E tests)
+    |   ├── integration         # E2E scripts (Calendar.js)
+    |   └── ...                 
+    ├── public                  # Static files (index.html,...)
+    ├── src                     # Sources and Unit Tests
+    │   ├── api                 # External APIs (openweather, google geocoder)
+    │   ├── components          # React components (Calendar.tsx, Reminder.tsx, ...)
+    │   ├── redux               # Redux, Redux-saga, Reducers, and Store
+    │   └── ...                 
+    └─...
+    
 ## Available Scripts
 
 In the project directory, you can run:
