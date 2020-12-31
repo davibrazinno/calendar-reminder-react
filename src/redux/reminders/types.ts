@@ -25,6 +25,7 @@ export interface CityModel {
 }
 
 export interface ReminderModel {
+    id?: string
     day: number
     month: number
     year: number

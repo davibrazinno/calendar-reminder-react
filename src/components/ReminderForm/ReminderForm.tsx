@@ -14,7 +14,9 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {GithubPicker} from 'react-color'
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { InputLabel } from '@material-ui/core';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IReminderFormProps {
     data: ReminderModel
@@ -41,6 +43,12 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             color: newColor.hex
         })
         setAnchorEl(null)
+    }
+
+    const [anchorElCity, setAnchorElCity] = useState<null | HTMLElement>(null);
+
+    const handleOpenCity = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorElCity(event.currentTarget)
     }
 
     useEffect(() => {
@@ -80,6 +88,7 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             day: dateTime.day,
             month: dateTime.month,
             year: dateTime.year,
+            id: reminder.id ? reminder.id : uuidv4()
         }
         setReminder(reminderUpdated)
         onSave(reminderUpdated)
@@ -111,6 +120,45 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             }
         }
         setReminder(reminderUpdated)
+        setAnchorElCity(null)
+    }
+
+    const renderCity = () => {
+        if (reminder.city) {
+            return (
+            <InputLabel>Select City
+                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenCity}>
+                    {reminder.city?.name}
+                </Button>
+                <Menu
+                    id="city-menu"
+                    anchorEl={anchorElCity}
+                    keepMounted
+                    open={Boolean(anchorElCity)}
+                    onClose={() => setAnchorElCity(null)}
+                >
+                    <MenuItem>
+                        <GooglePlacesAutocomplete
+                            autocompletionRequest={{types: ['(cities)']}}
+                            selectProps={{
+                                onChange: handleSetCity,
+                            }}
+                        />
+                    </MenuItem>
+                </Menu>
+            </InputLabel>
+        )} else {
+            return (
+            <InputLabel>Select City
+                <GooglePlacesAutocomplete
+                    autocompletionRequest={{types: ['(cities)']}}
+                    selectProps={{
+                        onChange: handleSetCity,
+                        style: 'width: 300px'
+                    }}
+                />
+            </InputLabel>
+        )}
     }
 
     return (
@@ -139,27 +187,24 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
                                 shrink: true,
                             }}
                         />
-                        <GooglePlacesAutocomplete
-                            autocompletionRequest={{types: ['(cities)']}}
-                            selectProps={{
-                                onChange: handleSetCity,
-                            }}
-                        />
+                        <div>
+                            {renderCity()}
+                        </div>
                         <div>
                             <InputLabel>Select Color
                                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenColors}>
                                     <Avatar style={{color: reminder.color, backgroundColor: reminder.color, width: '25px', height: '25px'}} />
                                 </Button>
                                 <Menu
-                                    id="simple-menu"
+                                    id="color-menu"
                                     anchorEl={anchorEl}
                                     keepMounted
                                     open={Boolean(anchorEl)}
+                                    onClose={() => setAnchorEl(null)}
                                 >
                                     <GithubPicker color={reminder.color} onChangeComplete={handleColorChange} triangle='hide'/>
                                 </Menu>
                             </InputLabel>
-
                         </div>
                     </form>
                 </DialogContent>

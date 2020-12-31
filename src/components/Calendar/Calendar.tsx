@@ -45,10 +45,22 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
 
     // TODO refactor models
     const [openReminder, setOpenReminder] = useState(false)
-    const openReminderDialog = (newReminder: MonthViewDay) => {
-        setReminder({
+    const openReminderDialog = (newReminder: MonthViewDay, e: any) => {
+        // check from where the click came, from the Reminder or the Calendar
+        // if the click is on the Reminder skip opening a new reminder
+        // then the Reminder will process its click and open it for edit
+        if (e && !e.nativeEvent.target?.classList?.contains('day-block')) {
+            e.preventDefault()
+            return
+        }
+        // open a new Reminder for the selected day in the calendar
+        openReminderDialogEdit({
             dateTime: DateTime.local().set({day: newReminder.day, month: newReminder.month, year: newReminder.year}).toMillis(),
         } as ReminderModel)
+    }
+
+    const openReminderDialogEdit = (reminder: ReminderModel) => {
+        setReminder(reminder)
         setOpenReminder(true)
     }
 
@@ -82,15 +94,17 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                 <div className="week" key={index}>
                     {week.map((weekDay) =>
                         <div key={`${weekDay.month}${weekDay.day}`}
-                             onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay) : e.preventDefault()}
+                             onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay, e) : e.preventDefault()}
                              data-date={weekDay.day}
                              className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
                              onKeyPress={() => {
                              }} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
                              role='button'
                              tabIndex={0}>
-                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.map((reminder: ReminderModel, index) =>
-                                <Reminder data={reminder} key={index}/>
+                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.slice()
+                                .sort((a, b) => a.dateTime - b.dateTime)
+                                .map((reminder: ReminderModel, index) =>
+                                <Reminder data={reminder} key={index} onRemainderClicked={openReminderDialogEdit}/>
                             )}
                         </div>
                     )}
