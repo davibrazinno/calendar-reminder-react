@@ -24,7 +24,11 @@ function remove(state: any, action: PayloadAction<ReminderModel>) {
     if (existingKey) {
         if (state[existingKey]) {
             const newState = state[existingKey].filter((reminder: ReminderModel) => reminder.id !== action.payload.id)
-            state[existingKey] = [...newState]
+            if (newState.length) {
+                state[existingKey] = [...newState]
+            } else {
+                delete state[existingKey]
+            }
         }
     }
 }
@@ -48,11 +52,10 @@ const remindersReducer = createReducer(initialState, (builder) => {
         )
         .addCase(deleteReminderAction, (state, action: PayloadAction<ReminderModel>) => {
             // remove the reminder if existing
-            console.log('del')
             remove(state, action)
         })
         .addCase(deleteDayReminderAction, (state, action: PayloadAction<string>) => {
-            console.log('delete day reminders')
+            delete state[action.payload]
         })
 })
 

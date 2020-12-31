@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './Calendar.scss';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import DeleteIcon from '@material-ui/icons/Delete';
 import {MonthView, MonthViewDay} from "./calendar.types";
 import {ReminderModel} from "../../redux/reminders/types";
 import {createMonthView} from "./calendar.utils";
@@ -14,10 +15,11 @@ interface ICalendarProps {
     reminders?: RemindersState
     onAddReminder?: any
     onDeleteReminder?: any
+    onDeleteDayReminders?: any
 }
 
 const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
-    const {reminders, onAddReminder, onDeleteReminder} = props
+    const {reminders, onAddReminder, onDeleteReminder, onDeleteDayReminders} = props
 
     const [dates, setDates] = useState<MonthView>(createMonthView(DateTime.local()))
 
@@ -31,7 +33,10 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
 
     const nextMonth = () => setCurrentDate(DateTime.fromMillis(currentDate).plus({months: 1}).toMillis())
 
-    const [reminder, setReminder] = useState<ReminderModel>({description: '', dateTime: new Date().getTime()} as ReminderModel)
+    const [reminder, setReminder] = useState<ReminderModel>({
+        description: '',
+        dateTime: new Date().getTime()
+    } as ReminderModel)
 
     const updateReminder = (reminderUpdated: ReminderModel) => {
         setOpenReminder(false)
@@ -61,13 +66,26 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
         }
         // open a new Reminder for the selected day in the calendar
         openReminderDialogEdit({
-            dateTime: DateTime.local().set({day: newReminder.day, month: newReminder.month, year: newReminder.year}).toMillis(),
+            dateTime: DateTime.local().set({
+                day: newReminder.day,
+                month: newReminder.month,
+                year: newReminder.year
+            }).toMillis(),
         } as ReminderModel)
     }
 
     const openReminderDialogEdit = (reminder: ReminderModel) => {
         setReminder(reminder)
         setOpenReminder(true)
+    }
+
+    const renderDeleteDayAll = (key: string) => {
+        if (key) {
+            return (<button className='delete-day'
+                            onClick={() => onDeleteDayReminders(key)}>
+                <DeleteIcon fontSize={"small"} color={"error"}/>
+            </button>)
+        }
     }
 
     return (
@@ -102,17 +120,18 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
                     {week.map((weekDay) =>
                         <div key={`${weekDay.month}${weekDay.day}`}
                              onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay, e) : e.preventDefault()}
-                             data-date={weekDay.day}
+                             data-day={weekDay.day}
                              className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
                              onKeyPress={() => {
-                             }} /* jsx-a11y/click-events-have-key-events: Visible, non-interactive elements with click handlers must have at least one keyboard listener */
+                             }}
                              role='button'
                              tabIndex={0}>
+                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`] && renderDeleteDayAll(`${weekDay.year}${weekDay.month}${weekDay.day}`)}
                             {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.slice()
                                 .sort((a, b) => a.dateTime - b.dateTime)
                                 .map((reminder: ReminderModel, index) =>
-                                <Reminder data={reminder} key={index} onRemainderClicked={openReminderDialogEdit}/>
-                            )}
+                                    <Reminder data={reminder} key={index} onRemainderClicked={openReminderDialogEdit}/>
+                                )}
                         </div>
                     )}
                 </div>

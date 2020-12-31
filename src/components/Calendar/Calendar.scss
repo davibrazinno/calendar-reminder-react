@@ -57,7 +57,7 @@
     min-width: 50px;
 
     &::after {
-      content: attr(data-date);
+      content: attr(data-day);
       font-weight: bold;
       display: block;
       position: absolute;
@@ -70,6 +70,14 @@
 
 .day-block {
   padding: 20px 5px 5px 5px;
+}
+
+.delete-day {
+  top: 0px;
+  right: 0px;
+  position: absolute;
+  border: none;
+  background-color: white;
 }
 
 .no-working-day {
