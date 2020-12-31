@@ -11,12 +11,13 @@ import Reminder from "../Reminder/Reminder";
 import ReminderForm from "../ReminderForm/ReminderForm";
 
 interface ICalendarProps {
-    reminders?: RemindersState;
-    onAddReminder?: any;
+    reminders?: RemindersState
+    onAddReminder?: any
+    onDeleteReminder?: any
 }
 
 const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
-    const {onAddReminder, reminders} = props
+    const {reminders, onAddReminder, onDeleteReminder} = props
 
     const [dates, setDates] = useState<MonthView>(createMonthView(DateTime.local()))
 
@@ -43,7 +44,12 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
         setOpenReminder(false)
     }
 
-    // TODO refactor models
+    const deleteReminder = (reminderUpdated: ReminderModel) => {
+        setOpenReminder(false)
+        setReminder({} as ReminderModel)
+        onDeleteReminder(reminderUpdated)
+    }
+
     const [openReminder, setOpenReminder] = useState(false)
     const openReminderDialog = (newReminder: MonthViewDay, e: any) => {
         // check from where the click came, from the Reminder or the Calendar
@@ -69,6 +75,7 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
             <ReminderForm
                 onSave={updateReminder}
                 onCancel={cancelReminder}
+                onDelete={deleteReminder}
                 data={reminder}
                 openReminder={openReminder}
             />

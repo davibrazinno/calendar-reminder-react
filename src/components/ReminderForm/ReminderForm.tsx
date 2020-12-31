@@ -14,42 +14,29 @@ import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {GithubPicker} from 'react-color'
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { InputLabel } from '@material-ui/core';
-import { v4 as uuidv4 } from 'uuid';
+import {InputLabel} from '@material-ui/core';
+import {v4 as uuidv4} from 'uuid';
 
 interface IReminderFormProps {
     data: ReminderModel
     openReminder?: boolean
     onSave: any,
-    onCancel: any
+    onCancel: any,
+    onDelete: any
 }
 
 
 const ReminderForm: React.FC<IReminderFormProps> = (props) => {
-    const {data, openReminder, onSave, onCancel} = props
+    const {data, openReminder, onSave, onCancel, onDelete} = props
 
     const [reminder, setReminder] = useState<ReminderModel>(data);
 
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [anchorColorSelection, setAnchorColorSelection] = useState<null | HTMLElement>(null);
 
-    const handleOpenColors = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget)
-    }
+    const [descriptionError, setDescriptionError] = useState(false)
+    const [descriptionHelperText, setDescriptionHelperText] = useState('')
 
-    const handleColorChange = (newColor: any) => {
-        setReminder({
-            ...reminder,
-            color: newColor.hex
-        })
-        setAnchorEl(null)
-    }
-
-    const [anchorElCity, setAnchorElCity] = useState<null | HTMLElement>(null);
-
-    const handleOpenCity = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorElCity(event.currentTarget)
-    }
+    const [open, setOpen] = React.useState(false);
 
     useEffect(() => {
         setReminder({
@@ -59,42 +46,32 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
         })
     }, [data])
 
-    const [open, setOpen] = React.useState(false);
-
+    // handles the dialog open internally
     useEffect(() => {
         setOpen(open)
     }, [open])
 
+    // handles the dialog open externally
     useEffect(() => {
-        if(!open && openReminder) {
+        if (!open && openReminder) {
             setOpen(true)
         }
     }, [openReminder, open])
 
-    const handleClickOpen = () => {
-        setOpen(true)
-    };
+    const handleOpenColors = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorColorSelection(event.currentTarget)
+    }
 
-    const handleClose = () => {
-        onCancel()
-        setOpen(false)
-    };
-
-    const handleSave = () => {
-        setOpen(false)
-        const dateTime = DateTime.fromMillis(reminder.dateTime)
-        const reminderUpdated = {
+    const handleColorChange = (newColor: any) => {
+        setReminder({
             ...reminder,
-            day: dateTime.day,
-            month: dateTime.month,
-            year: dateTime.year,
-            id: reminder.id ? reminder.id : uuidv4()
-        }
-        setReminder(reminderUpdated)
-        onSave(reminderUpdated)
-    };
+            color: newColor.hex
+        })
+        setAnchorColorSelection(null)
+    }
 
     const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        validateDescription(event.target.value)
         const reminderUpdated = {
             ...reminder,
             description: event.target.value
@@ -120,46 +97,58 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             }
         }
         setReminder(reminderUpdated)
-        setAnchorElCity(null)
     }
 
-    const renderCity = () => {
-        if (reminder.city) {
-            return (
-            <InputLabel>Select City
-                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenCity}>
-                    {reminder.city?.name}
-                </Button>
-                <Menu
-                    id="city-menu"
-                    anchorEl={anchorElCity}
-                    keepMounted
-                    open={Boolean(anchorElCity)}
-                    onClose={() => setAnchorElCity(null)}
-                >
-                    <MenuItem>
-                        <GooglePlacesAutocomplete
-                            autocompletionRequest={{types: ['(cities)']}}
-                            selectProps={{
-                                onChange: handleSetCity,
-                            }}
-                        />
-                    </MenuItem>
-                </Menu>
-            </InputLabel>
-        )} else {
-            return (
-            <InputLabel>Select City
-                <GooglePlacesAutocomplete
-                    autocompletionRequest={{types: ['(cities)']}}
-                    selectProps={{
-                        onChange: handleSetCity,
-                        style: 'width: 300px'
-                    }}
-                />
-            </InputLabel>
-        )}
+    const validateDescription = (description: string) => {
+        let valid = true
+        if (!description) {
+            valid = false
+            setDescriptionHelperText('The description is required')
+        } else if (description.length > 30) {
+            valid = false
+            setDescriptionHelperText('The description must have up to 30 characters')
+        } else {
+            setDescriptionHelperText('')
+        }
+        setDescriptionError(valid)
+        return valid
     }
+
+    const validateForm = (data: ReminderModel) => {
+        return validateDescription(data.description)
+    }
+
+    const handleClickOpen = () => {
+        setOpen(true)
+    };
+
+    const handleDelete = () => {
+        setDescriptionError(false)
+        setOpen(false)
+        onDelete(reminder)
+    }
+
+    const handleClose = () => {
+        setDescriptionError(false)
+        setOpen(false)
+        onCancel()
+    };
+
+    const handleSave = () => {
+        if (validateForm(reminder)) {
+            setOpen(false)
+            const dateTime = DateTime.fromMillis(reminder.dateTime)
+            const reminderUpdated = {
+                ...reminder,
+                day: dateTime.day,
+                month: dateTime.month,
+                year: dateTime.year,
+                id: reminder.id ? reminder.id : uuidv4()
+            }
+            setReminder(reminderUpdated)
+            onSave(reminderUpdated)
+        }
+    };
 
     return (
         <div className='ReminderForm' data-testid="ReminderForm">
@@ -168,47 +157,81 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             </Fab>
             <Dialog fullScreen open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Reminder</DialogTitle>
-                <DialogContent>
+                <DialogContent style={{maxWidth: '400px'}}>
                     <form noValidate>
                         <TextField
+                            style={{marginBottom: '15px'}}
+                            variant="outlined"
+                            fullWidth
+                            required
+                            error={!descriptionError}
+                            helperText={descriptionHelperText}
                             margin="dense"
                             id="description"
                             label="What?"
-                            fullWidth
                             defaultValue={reminder.description}
-                            onChange={handleDescriptionChange}/>
+                            onChange={handleDescriptionChange}
+                            onKeyPress={(e) => e.keyCode === 13 ? e.preventDefault() : {}}
+                        />
                         <TextField
+                            style={{marginBottom: '15px'}}
+                            variant="outlined"
+                            fullWidth
                             id="dateTime"
                             label="When?"
                             type="datetime-local"
-                            defaultValue={DateTime.fromMillis(reminder.dateTime).set({second: 0, millisecond: 0}).toISO({ includeOffset: false, suppressSeconds: true, suppressMilliseconds: true })}
+                            defaultValue={DateTime.fromMillis(reminder.dateTime).set({
+                                second: 0,
+                                millisecond: 0
+                            }).toISO({includeOffset: false, suppressSeconds: true, suppressMilliseconds: true})}
                             onChange={handleDateTimeChange}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                         />
-                        <div>
-                            {renderCity()}
+                        <div style={{marginBottom: '15px'}}>
+                            <InputLabel>Where? {reminder.city ? ` (${reminder.city.name})` : ''}
+                                <GooglePlacesAutocomplete
+                                    autocompletionRequest={{types: ['(cities)']}}
+                                    selectProps={{
+                                        onChange: handleSetCity,
+                                        style: 'width: 300px'
+                                    }}
+                                />
+                            </InputLabel>
                         </div>
                         <div>
                             <InputLabel>Select Color
                                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenColors}>
-                                    <Avatar style={{color: reminder.color, backgroundColor: reminder.color, width: '25px', height: '25px'}} />
+                                    <Avatar style={{
+                                        color: reminder.color,
+                                        backgroundColor: reminder.color,
+                                        width: '25px',
+                                        height: '25px'
+                                    }}/>
                                 </Button>
                                 <Menu
                                     id="color-menu"
-                                    anchorEl={anchorEl}
+                                    anchorEl={anchorColorSelection}
                                     keepMounted
-                                    open={Boolean(anchorEl)}
-                                    onClose={() => setAnchorEl(null)}
+                                    open={Boolean(anchorColorSelection)}
+                                    onClose={() => setAnchorColorSelection(null)}
                                 >
-                                    <GithubPicker color={reminder.color} onChangeComplete={handleColorChange} triangle='hide'/>
+                                    <GithubPicker color={reminder.color} onChangeComplete={handleColorChange}
+                                                  triangle='hide'/>
                                 </Menu>
                             </InputLabel>
                         </div>
                     </form>
                 </DialogContent>
                 <DialogActions>
+                    {reminder.id
+                        ?
+                        <Button onClick={handleDelete} color="secondary">
+                            Delete
+                        </Button>
+                        : <span/>
+                    }
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>

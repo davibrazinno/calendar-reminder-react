@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import './App.scss';
 import {RootState} from "../redux/rootReducer";
 import Calendar from "./Calendar/Calendar";
-import {addReminderRequest} from "../redux/reminders/actions";
+import {addReminderRequest, deleteReminderAction} from "../redux/reminders/actions";
 import {ReminderModel} from "../redux/reminders/types";
 
 
@@ -15,11 +15,16 @@ const App: React.FC = (): JSX.Element => {
         dispatch(addReminderRequest(reminder))
     }
 
+    const deleteReminder = (reminder: ReminderModel) => {
+        dispatch(deleteReminderAction(reminder))
+    }
+
     return (
         <div className="App" data-testid="App">
             <Calendar
                 reminders={reminders}
                 onAddReminder={addReminder}
+                onDeleteReminder={deleteReminder}
             />
         </div>
     );

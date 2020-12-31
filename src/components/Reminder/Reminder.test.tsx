@@ -6,8 +6,8 @@ import {ReminderModel} from "../../redux/reminders/types";
 
 describe('<Reminder />', () => {
   test('it should mount', () => {
-    const mockReminder = {description: 'Mock Reminder'} as ReminderModel
-    render(<Reminder data={mockReminder} />);
+    const mockReminder = {dateTime: new Date().getTime()} as ReminderModel
+    render(<Reminder data={mockReminder} onRemainderClicked={() => {}}/>);
 
     const reminder = screen.getByTestId('Reminder');
 
