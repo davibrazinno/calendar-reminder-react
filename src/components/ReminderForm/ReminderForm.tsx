@@ -155,9 +155,9 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
             <Fab variant="extended" color="primary" style={{margin: '15px'}} onClick={() => handleClickOpen()}>
                 <AddIcon/> New Reminder
             </Fab>
-            <Dialog fullScreen open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Reminder</DialogTitle>
-                <DialogContent style={{maxWidth: '400px'}}>
+                <DialogContent style={{minHeight: '400px'}}>
                     <form noValidate>
                         <TextField
                             style={{marginBottom: '15px'}}
