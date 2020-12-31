@@ -118,15 +118,13 @@ const Calendar: React.FC<ICalendarProps> = (props: ICalendarProps) => {
             {dates?.weeks.map((week, index) =>
                 <div className="week" key={index}>
                     {week.map((weekDay) =>
-                        <div key={`${weekDay.month}${weekDay.day}`}
-                             onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay, e) : e.preventDefault()}
+                        <div className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
+                             key={`${weekDay.month}${weekDay.day}`}
                              data-day={weekDay.day}
-                             className={`day-block ${weekDay.isWorkingDay ? '' : 'no-working-day'} ${weekDay.isCurrentMonth ? '' : 'other-month-day'}`}
-                             onKeyPress={() => {
-                             }}
-                             role='button'
-                             tabIndex={0}>
-                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`] && renderDeleteDayAll(`${weekDay.year}${weekDay.month}${weekDay.day}`)}
+                             onClick={(e) => weekDay.isCurrentMonth ? openReminderDialog(weekDay, e) : e.preventDefault()}
+                             onKeyPress={() => {}} role='button' tabIndex={0}>
+                            {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`] &&
+                                renderDeleteDayAll(`${weekDay.year}${weekDay.month}${weekDay.day}`)}
                             {reminders && reminders[`${weekDay.year}${weekDay.month}${weekDay.day}`]?.slice()
                                 .sort((a, b) => a.dateTime - b.dateTime)
                                 .map((reminder: ReminderModel, index) =>

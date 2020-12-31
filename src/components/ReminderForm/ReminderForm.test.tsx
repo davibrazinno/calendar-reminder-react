@@ -7,7 +7,7 @@ import {ReminderModel} from "../../redux/reminders/types";
 describe('<ReminderForm />', () => {
   test('it should mount', () => {
     const mockReminder = {dateTime: new Date().getTime()} as ReminderModel
-    render(<ReminderForm onSave={(reminder: ReminderModel) => {}} onCancel={() => {}} data={mockReminder}/>);
+    render(<ReminderForm onSave={() => {}} onDelete={() => {}} onCancel={() => {}} data={mockReminder}/>);
 
     const reminderForm = screen.getByTestId('ReminderForm');
 

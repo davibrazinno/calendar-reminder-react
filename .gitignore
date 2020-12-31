@@ -1,3 +1,6 @@
 node_modules
 .idea
 .eslintcache
+*.json
+*.log
+*.lock

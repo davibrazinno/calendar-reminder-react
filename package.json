@@ -5,7 +5,10 @@
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@reduxjs/toolkit": "^1.4.0",
+    "@types/autosuggest-highlight": "^3.1.1",
+    "@types/lodash": "^4.14.166",
     "@types/luxon": "^1.25.0",
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.0",
@@ -13,6 +16,8 @@
     "@types/react-dom": "^16.9.0",
     "@types/react-redux": "^7.1.9",
     "@types/uuid": "^8.3.0",
+    "autosuggest-highlight": "^3.1.1",
+    "lodash": "^4.17.20",
     "luxon": "^1.25.0",
     "node-sass": "^4.0.0",
     "react": "^17.0.1",
@@ -33,6 +38,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:e2e": "start-server-and-test :3000 cy:run",
+    "cy:run": "cypress open",
     "eject": "react-scripts eject",
     "serve": "serve -s build",
     "build-and-serve": "yarn build && npm run serve"
@@ -59,9 +66,13 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/dom": "^7.29.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@types/redux-mock-store": "^1.0.2",
-    "redux-mock-store": "^1.5.4"
+    "cypress": "^6.2.0",
+    "cypress-plugin-tab": "^1.0.5",
+    "redux-mock-store": "^1.5.4",
+    "start-server-and-test": "^1.11.7"
   }
 }

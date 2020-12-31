@@ -30,6 +30,8 @@ export function* addReminder(action: any) {
                 const weather: DailyWeatherData = yield call(getLocationWeatherForecast, coordinates)
                 reminder.weather = weather.daily[daysDiff].weather[0]
             }
+        } else {
+            delete reminder.weather
         }
 
         yield put(addReminderSuccess(reminder))

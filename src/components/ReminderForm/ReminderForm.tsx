@@ -6,16 +6,16 @@ import TextField from "@material-ui/core/TextField/TextField";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog/Dialog";
-import {ReminderColor, ReminderModel} from "../../redux/reminders/types";
+import {CityModel, ReminderColor, ReminderModel} from "../../redux/reminders/types";
 import AddIcon from '@material-ui/icons/Add';
 import Fab from "@material-ui/core/Fab";
 import {DateTime} from "luxon";
-import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import {GithubPicker} from 'react-color'
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
 import {InputLabel} from '@material-ui/core';
 import {v4 as uuidv4} from 'uuid';
+import {CityAutocompleteField} from "../CityAutocompleteField/CityAutocompleteField";
 
 interface IReminderFormProps {
     data: ReminderModel
@@ -88,13 +88,10 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
         setReminder(reminderUpdated)
     }
 
-    const handleSetCity = (e: any) => {
+    const handleSetCity = (city: CityModel) => {
         const reminderUpdated = {
             ...reminder,
-            city: {
-                name: e.value.structured_formatting.main_text,
-                placeId: e.value.place_id
-            }
+            city
         }
         setReminder(reminderUpdated)
     }
@@ -110,7 +107,7 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
         } else {
             setDescriptionHelperText('')
         }
-        setDescriptionError(valid)
+        setDescriptionError(!valid)
         return valid
     }
 
@@ -124,12 +121,14 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
 
     const handleDelete = () => {
         setDescriptionError(false)
+        setDescriptionHelperText('')
         setOpen(false)
         onDelete(reminder)
     }
 
     const handleClose = () => {
         setDescriptionError(false)
+        setDescriptionHelperText('')
         setOpen(false)
         onCancel()
     };
@@ -152,19 +151,19 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
 
     return (
         <div className='ReminderForm' data-testid="ReminderForm">
-            <Fab variant="extended" color="primary" style={{margin: '15px'}} onClick={() => handleClickOpen()}>
+            <Fab variant="extended" color="primary" style={{margin: '15px'}} onClick={() => handleClickOpen()} data-testid="NewReminderButton">
                 <AddIcon/> New Reminder
             </Fab>
-            <Dialog fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <Dialog fullWidth open={open} onClose={handleClose} className="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Reminder</DialogTitle>
-                <DialogContent style={{minHeight: '400px'}}>
+                <DialogContent>
                     <form noValidate>
                         <TextField
+                            inputProps={{ 'data-testid': 'DescriptionInput' }}
                             style={{marginBottom: '15px'}}
-                            variant="outlined"
                             fullWidth
                             required
-                            error={!descriptionError}
+                            error={descriptionError}
                             helperText={descriptionHelperText}
                             margin="dense"
                             id="description"
@@ -175,7 +174,6 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
                         />
                         <TextField
                             style={{marginBottom: '15px'}}
-                            variant="outlined"
                             fullWidth
                             id="dateTime"
                             label="When?"
@@ -189,20 +187,13 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
                                 shrink: true,
                             }}
                         />
-                        <div style={{marginBottom: '15px'}}>
-                            <InputLabel>Where? {reminder.city ? ` (${reminder.city.name})` : ''}
-                                <GooglePlacesAutocomplete
-                                    autocompletionRequest={{types: ['(cities)']}}
-                                    selectProps={{
-                                        onChange: handleSetCity,
-                                        style: 'width: 300px'
-                                    }}
-                                />
-                            </InputLabel>
-                        </div>
+                        <CityAutocompleteField
+                            onCitySelected={handleSetCity}
+                            initialValue={reminder.city?.name || ''}
+                        />
                         <div>
                             <InputLabel>Select Color
-                                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenColors}>
+                                <Button data-testid='select-color' aria-controls="simple-menu" aria-haspopup="true" onClick={handleOpenColors}>
                                     <Avatar style={{
                                         color: reminder.color,
                                         backgroundColor: reminder.color,
@@ -235,7 +226,7 @@ const ReminderForm: React.FC<IReminderFormProps> = (props) => {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} color="primary">
+                    <Button onClick={handleSave} color="primary" data-testid="SaveReminderButton">
                         Save
                     </Button>
                 </DialogActions>
