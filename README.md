@@ -3,11 +3,11 @@ A Simple Calendar Reminder React App.
 
 This project implements a simple calendar reminder. Written in TypeScript using React and Redux, it uses [Luxon](https://moment.github.io/luxon/) internally to provide support to the calendar component.
 
-The Calendar component intend to encapsulate the reminder, providing almost E2E experience. The component handles the reminders visualization and provide support to the CRUD actions through callback props.
+The Calendar component intend to encapsulate the reminder. The component handles the reminders visualization and provide support to the CRUD actions through callback props.
 
 The App component uses the Calendar component and stores the reminders in the Session Storage, using [Redux-Saga](https://redux-saga.js.org/).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and upgraded to include Luxon, Sass, Redux Saga, React Icons.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and upgraded to include Luxon, Sass, Redux Saga, Material UI, React Icons, and Cypress for E2E testing.
 
 
 ## Available Scripts
@@ -30,6 +30,14 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.<br />
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `yarn test:e2e`
+
+Launches the cypress test runner in the interactive watch mode.<br />
+Here's a sample video:
+
+![Sample video](https://user-images.githubusercontent.com/76712257/103430877-3f62e700-4ba7-11eb-8485-7fbc0a62d73a.mp4)
+
 
 ### `yarn build`
 
