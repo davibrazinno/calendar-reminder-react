@@ -109,8 +109,7 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 E2E Tests: Launches the cypress test runner.<br />
 Here's a sample video:
 
-![Sample video](https://user-images.githubusercontent.com/76712257/103430877-3f62e700-4ba7-11eb-8485-7fbc0a62d73a.mp4)
-
+[![Watch the video](https://user-images.githubusercontent.com/76712257/103444026-843c5b80-4c43-11eb-87c2-541d3ef56cc9.gif)](https://user-images.githubusercontent.com/76712257/103430877-3f62e700-4ba7-11eb-8485-7fbc0a62d73a.mp4)
 
 ### `yarn build`
 
